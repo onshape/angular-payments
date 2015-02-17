@@ -69,7 +69,8 @@ angular.module('angularPayments')
             scope.$apply(function() {
               scope[attr.stripeForm].apply(scope, args);
             });
-            button.prop('disabled', false);
+            // TODO: Remove this code when BEL-17206 is fixed officialy in angular-payments
+            // button.prop('disabled', false);
 
           });
 
