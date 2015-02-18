@@ -1,7 +1,7 @@
 angular.module('angularPayments')
 
 .directive('stripeForm', ['$window', '$parse', 'Common', function($window, $parse, Common) {
-    
+
   // directive intercepts form-submission, obtains Stripe's cardToken using stripe.js
   // and then passes that to callback provided in stripeForm, attribute.
 
@@ -11,13 +11,13 @@ angular.module('angularPayments')
 
   // filter valid stripe-values from scope and convert them from camelCase to snake_case
   _getDataToSend = function(data){
-           
-    var possibleKeys = ['number', 'expMonth', 'expYear', 
-                    'cvc', 'name','addressLine1', 
+
+    var possibleKeys = ['number', 'expMonth', 'expYear',
+                    'cvc', 'name','addressLine1',
                     'addressLine2', 'addressCity',
                     'addressState', 'addressZip',
                     'addressCountry']
-    
+
     var camelToSnake = function(str){
       return str.replace(/([A-Z])/g, function(m){
         return "_"+m.toLowerCase();
@@ -62,7 +62,6 @@ angular.module('angularPayments')
         button.prop('disabled', true);
 
         if(form.hasClass('ng-valid')) {
-          
 
           $window.Stripe.createToken(_getDataToSend(scope), function() {
             var args = arguments;
@@ -78,7 +77,8 @@ angular.module('angularPayments')
           scope.$apply(function() {
             scope[attr.stripeForm].apply(scope, [400, {error: 'Invalid form submitted.'}]);
           });
-          button.prop('disabled', false);
+          // TODO: Remove this commented out code when fixed in angular-payments
+          // button.prop('disabled', false);
         }
 
         scope.expMonth = null;
