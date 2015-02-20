@@ -59,7 +59,7 @@ angular.module('angularPayments')
         }
 
         var button = form.find('button');
-        button.prop('disabled', true);
+        // button.prop('disabled', true);
 
         if(form.hasClass('ng-valid')) {
 
@@ -68,16 +68,13 @@ angular.module('angularPayments')
             scope.$apply(function() {
               scope[attr.stripeForm].apply(scope, args);
             });
-            // TODO: Remove this code when BEL-17206 is fixed officialy in angular-payments
             // button.prop('disabled', false);
-
           });
 
         } else {
           scope.$apply(function() {
             scope[attr.stripeForm].apply(scope, [400, {error: 'Invalid form submitted.'}]);
           });
-          // TODO: Remove this commented out code when fixed in angular-payments
           // button.prop('disabled', false);
         }
 

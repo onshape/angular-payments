@@ -41,7 +41,17 @@ angular.module('angularPayments')
         upperLength = card.length[card.length.length - 1];
       }
 
+      // Do not allow more than the upper length of characters
       if (length >= upperLength) {
+        return;
+      }
+
+      if (digit !== '0' && digit !== '1' &&
+          digit !== '2' && digit !== '3' &&
+          digit !== '4' && digit !== '5' &&
+          digit !== '6' && digit !== '7' &&
+          digit !== '8' && digit !== '9') {
+        e.preventDefault();
         return;
       }
 
@@ -196,6 +206,15 @@ angular.module('angularPayments')
       return
     }
 
+    if (digit !== '0' && digit !== '1' &&
+        digit !== '2' && digit !== '3' &&
+        digit !== '4' && digit !== '5' &&
+        digit !== '6' && digit !== '7' &&
+        digit !== '8' && digit !== '9') {
+      e.preventDefault();
+      return;
+    }
+
     // Prevent entering non-digit characters
     if (!/\d+$/.test(digit)) {
       e.preventDefault();
@@ -234,6 +253,15 @@ angular.module('angularPayments')
     $target = angular.element(e.currentTarget);
     digit = String.fromCharCode(e.which);
     if (!/^\d+$/.test(digit) && !e.metaKey && e.keyCode >= 46) {
+      e.preventDefault();
+      return;
+    }
+
+    if (digit !== '0' && digit !== '1' &&
+        digit !== '2' && digit !== '3' &&
+        digit !== '4' && digit !== '5' &&
+        digit !== '6' && digit !== '7' &&
+        digit !== '8' && digit !== '9') {
       e.preventDefault();
       return;
     }
