@@ -257,6 +257,16 @@ angular.module('angularPayments')
       return;
     }
 
+    // Is control character (arrow keys, delete, enter, etc...)
+    function isSystemKey(code) {
+      return code === 8 || code === 0 || code === 13
+    }
+
+    // Allow normal system keys to work
+    if (isSystemKey(e.which) || e.metaKey) {
+      return;
+    }
+
     if (digit !== '0' && digit !== '1' &&
         digit !== '2' && digit !== '3' &&
         digit !== '4' && digit !== '5' &&
@@ -289,6 +299,16 @@ angular.module('angularPayments')
       return;
     }
 
+    // Is control character (arrow keys, delete, enter, etc...)
+    function isSystemKey(code) {
+      return code === 8 || code === 0 || code === 13
+    }
+
+    // Allow normal system keys to work
+    if (isSystemKey(e.which) || e.metaKey) {
+      return
+    }
+
     $target = angular.element(e.currentTarget);
     val = $target.val() + digit;
 
@@ -305,16 +325,16 @@ angular.module('angularPayments')
 
   _formatForwardExpiry = function(e) {
     var $target, digit, val;
-    
+
     digit = String.fromCharCode(e.which);
-    
+
     if (!/^\d+$/.test(digit) && !e.metaKey && e.keyCode >= 46) {
       return;
     }
-    
+
     $target = angular.element(e.currentTarget);
     val = $target.val();
-    
+
     if (/^\d\d$/.test(val)) {
       return $target.val("" + val + " / ");
     }
@@ -322,16 +342,16 @@ angular.module('angularPayments')
 
   _formatForwardSlash = function(e) {
     var $target, slash, val;
-    
+
     slash = String.fromCharCode(e.which);
-    
+
     if (slash !== '/') {
       return;
     }
-    
+
     $target = angular.element(e.currentTarget);
     val = $target.val();
-    
+
     if (/^\d$/.test(val) && val !== '0') {
       return $target.val("0" + val + " / ");
     }
@@ -339,22 +359,22 @@ angular.module('angularPayments')
 
   _formatBackExpiry = function(e) {
     var $target, value;
-    
+
     if (e.meta) {
       return;
     }
-    
+
     $target = angular.element(e.currentTarget);
     value = $target.val();
-    
+
     if (e.which !== 8) {
       return;
     }
-    
+
     if (($target.prop('selectionStart') != null) && $target.prop('selectionStart') !== value.length) {
       return;
     }
-    
+
     if (/\d(\s|\/)+$/.test(value)) {
       e.preventDefault();
       return $target.val(value.replace(/\d(\s|\/)*$/, ''));
