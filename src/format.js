@@ -348,8 +348,6 @@ angular.module('angularPayments')
       return $target.val("" + val + " / ");
 
     }
-
-    
   };
 
   _formatForwardExpiry = function(e) {
