@@ -42,7 +42,8 @@ angular.module('angularPayments')
       }
 
       // Do not allow more than the upper length of characters
-      if (length >= upperLength) {
+      if (length > upperLength) {
+        e.preventDefault();
         return;
       }
 
