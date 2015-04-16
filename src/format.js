@@ -299,6 +299,24 @@ angular.module('angularPayments')
       return;
     }
 
+    // reformat a badly formed expiry
+    function reformatExpiry(value) {
+      var newVal = '',
+          index = 0;
+
+      for (var i = 0; i < value.length; i++) {
+        if (value[i] !== ' ' && value[i] !== '/') {
+          newVal = newVal + value[i];
+          index++;
+          if (index === 2) {
+            newVal = newVal += ' / ';
+          }
+        }
+      }
+
+      return newVal;
+    }
+
     // Is control character (arrow keys, delete, enter, etc...)
     function isSystemKey(code) {
       return code === 8 || code === 0 || code === 13
@@ -312,6 +330,15 @@ angular.module('angularPayments')
     $target = angular.element(e.currentTarget);
     val = $target.val() + digit;
 
+    // handle the user messing up the separator
+    if (val.length > 2 && val.indexOf('/') < 0) {
+      // separator has been deleted
+      $target.val(val.substring(0, 2) + ' / ' + val.substring(2));
+    } else if ( val.length > 2 && val.indexOf('/') !== 3) {
+      // Separator has been moved ... why would you do this
+      $target.val(reformatExpiry(val));
+    }
+
     if (/^\d$/.test(val) && (val !== '0' && val !== '1')) {
       e.preventDefault();
       return $target.val("0" + val + " / ");
@@ -321,6 +348,8 @@ angular.module('angularPayments')
       return $target.val("" + val + " / ");
 
     }
+
+    
   };
 
   _formatForwardExpiry = function(e) {
