@@ -322,7 +322,6 @@ angular.module('angularPayments')
       return code === 8 || code === 0 || code === 13
     }
 
-    // reformat a badly formed expiry
     // Allow normal system keys to work
     if (isSystemKey(e.which) || e.metaKey) {
       return
