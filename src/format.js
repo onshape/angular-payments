@@ -41,8 +41,18 @@ angular.module('angularPayments')
         upperLength = card.length[card.length.length - 1];
       }
 
+      function getSelectedText () {
+        var selection;
+        if (typeof window.getSelection !== undefined) {
+          selection = window.getSelection().toString();
+        } else {
+          selection = document.selection.createRange().text;
+        }
+        return selection.replace(/\s/g, '');
+      }
+
       // Do not allow more than the upper length of characters
-      if (length > upperLength) {
+      if (length > upperLength && getSelectedText() !== value.replace(/\s/g, '')) {
         e.preventDefault();
         return;
       }
@@ -74,10 +84,8 @@ angular.module('angularPayments')
         e.preventDefault();
         return $target.val(value + ' ' + digit);
 
-      } else if (re.test(value + digit)) {
-        e.preventDefault();
-        return $target.val(value + digit + ' ');
-
+      } else if (re.test(value + digit) && length < upperLength) {
+        return $target.val(value + digit + ' ');  
       }
   };
 
