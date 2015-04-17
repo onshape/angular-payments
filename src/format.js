@@ -85,6 +85,7 @@ angular.module('angularPayments')
         return $target.val(value + ' ' + digit);
 
       } else if (re.test(value + digit) && length < upperLength) {
+        e.preventDefault();
         return $target.val(value + digit + ' ');  
       }
   };
