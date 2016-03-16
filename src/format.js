@@ -3,7 +3,7 @@ angular.module('angularPayments')
 
 .factory('_Format',['Cards', 'Common', '$filter', function(Cards, Common, $filter){
 
-  var _formats = {}
+  var _formats = {};
 
   var _hasTextSelected = function($target) {
       var ref;
@@ -192,19 +192,23 @@ angular.module('angularPayments')
     elem.bind('keydown', _formatBackCardNumber);
     elem.bind('paste', _reFormatCardNumber);
 
+    elem.on('$destroy', function() {
+      elem.unbind();
+    });
+
     ctrl.$parsers.push(_parseCardNumber);
     ctrl.$formatters.push(_getFormattedCardNumber);
-  }
+  };
 
 
   // cvc
 
   _formatCVC = function(e){
-    var $target, digit, value
+    var $target, digit, value;
 
     $target = angular.element(e.currentTarget);
     digit = String.fromCharCode(e.which);
-    value = $target.val()
+    value = $target.val();
 
     // Is control character (arrow keys, delete, enter, etc...)
     function isSystemKey(code) {
@@ -248,12 +252,16 @@ angular.module('angularPayments')
 
       return $target.val(value);
     });
-  }
+  };
 
   _formats['cvc'] = function(elem){
-    elem.bind('keypress', _formatCVC)
-    elem.bind('paste', _pasteCVC)
-  }
+    elem.bind('keypress', _formatCVC);
+    elem.bind('paste', _pasteCVC);
+
+    elem.on('$destroy', function() {
+      elem.unbind();
+    });
+  };
 
   // expiry
 
@@ -294,7 +302,7 @@ angular.module('angularPayments')
     value = value.replace(/\D/g, '');
 
     if (value.length > 6) {
-      e.preventDefault()
+      e.preventDefault();
       return;
     }
   };
@@ -333,35 +341,26 @@ angular.module('angularPayments')
     }
   };
 
-  var _reformatExpiry = function(e) {
-    var $target = angular.element(e.currentTarget),
-      val = $target.val();
+  var _reformatExpiry = function(e, ctrl) {
+    return setTimeout(function() {
+      var $target = angular.element(e.target),
+        val = $target.val(),
+        expiryRegExWithSingleMonth = /^\d\s?\/\s?\d{2}/,
+        fourDigits = /^\d{4}/,
+        expiryRegEx = /^\d{2}\s?\/\s?\d{2}/; // for '1/20' and '1 / 20' format
 
-    // reformat a badly formed expiry
-    function reformatExpiry(value) {
-      var newVal = '',
-        index = 0;
+      val = val.replace(/\s/g,'');
+      e.preventDefault();
 
-      for (var i = 0; i < value.length; i++) {
-        if (value[i] !== ' ' && value[i] !== '/') {
-          newVal = newVal + value[i];
-          index++;
-          if (index === 2) {
-            newVal = newVal += ' / ';
-          }
+      if(fourDigits.test(val)) {
+        return $target.val(val.substring(0, 2) + ' / ' + val.substring(2));
+      } else if(!expiryRegEx.test(val)) {
+        if(expiryRegExWithSingleMonth.test(val)) {
+          val = '0' + val;
         }
+        return $target.val(val.substring(0, 2) + ' / ' + val.substring(3));
       }
-      return newVal;
-    }
-
-    // handle the user messing up the separator
-    if (val.length > 2 && val.indexOf('/') < 0) {
-      // separator has been deleted
-      return $target.val(val.substring(0, 2) + ' / ' + val.substring(2));
-    } else if ( val.length > 2 && val.indexOf('/') !== 3) {
-      // Separator has been moved ... why would you do this
-      return $target.val(reformatExpiry(val));
-    }
+    });
   };
 
   _formatForwardExpiry = function(e) {
@@ -453,10 +452,15 @@ angular.module('angularPayments')
     elem.bind('keypress', _formatForwardExpiry);
     elem.bind('keydown', _formatBackExpiry);
     elem.bind('blur', _reformatExpiry);
+    elem.bind('paste', _reformatExpiry);
+
+    elem.on('$destroy', function() {
+      elem.unbind();
+    });
 
     ctrl.$parsers.push(_parseExpiry);
     ctrl.$formatters.push(_getFormattedExpiry);
-  }
+  };
 
   return function(type, elem, ctrl){
     if(!_formats[type]){
@@ -481,4 +485,4 @@ angular.module('angularPayments')
         _Format(attr.paymentsFormat, elem, ctrl);
       }
     }
-}])
+}]);
