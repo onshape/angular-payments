@@ -352,6 +352,10 @@ angular.module('angularPayments')
       val = val.replace(/\s/g,'');
       e.preventDefault();
 
+      if(val === '') {
+        return false;
+      }
+
       if(fourDigits.test(val)) {
         return $target.val(val.substring(0, 2) + ' / ' + val.substring(2));
       } else if(!expiryRegEx.test(val)) {

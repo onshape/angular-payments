@@ -50,5 +50,6 @@ module.exports = function(grunt) {
 
   grunt.registerTask('default', ['concat', 'uglify']);
   grunt.registerTask('serve', ['concat', 'uglify', 'connect:server']);
+  grunt.registerTask('serve:debug', ['concat', 'connect:server']);
 
 };
