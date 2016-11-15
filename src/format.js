@@ -53,7 +53,6 @@ angular.module('angularPayments')
 
       // Do not allow more than the upper length of characters
       if (length > upperLength && getSelectedText() !== value.replace(/\s/g, '')) {
-        e.preventDefault();
         return;
       }
 
@@ -86,7 +85,7 @@ angular.module('angularPayments')
 
       } else if (re.test(value + digit) && length < upperLength) {
         e.preventDefault();
-        return $target.val(value + digit + ' ');  
+        return $target.val(value + digit + ' ');
       }
   };
 
