@@ -1,11 +1,12 @@
 {
   "name": "angular-payments",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "homepage": "https://github.com/onshape/angular-payments",
   "authors": [
     "Lauri Hynynen <@laurihy>",
     "Bob Miner",
-    "Burke Livingston"
+    "Burke Livingston",
+    "Vishnudas Kulkarni"
   ],
   "main": "lib/angular-payments.js",
   "description": "Directive for formatting and validating credit card forms",
