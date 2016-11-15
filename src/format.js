@@ -43,16 +43,22 @@ angular.module('angularPayments')
 
       function getSelectedText () {
         var selection;
-        if (typeof window.getSelection !== undefined) {
-          selection = window.getSelection().toString();
+        if (window.getSelection) {
+          selection = $target.val().substring($target.prop('selectionStart'), $target.prop('selectionEnd'));
         } else {
           selection = document.selection.createRange().text;
         }
         return selection.replace(/\s/g, '');
       }
 
+      // Handles when user selected the whole text and we want to allow enter new values replacing old
+      if(getSelectedText() === value.replace(/\s/g, '')) {
+        length = 0;
+      }
+
       // Do not allow more than the upper length of characters
-      if (length > upperLength && getSelectedText() !== value.replace(/\s/g, '')) {
+      if (length > upperLength) {
+        e.preventDefault();
         return;
       }
 
@@ -170,14 +176,25 @@ angular.module('angularPayments')
       }
     };
 
-  var _reFormatCardNumber = function(e) {
+  var _reFormatCardNumber = function(e, ctrl) {
+    var $target, card, oldValue, newValue, upperLength;
+    $target = angular.element(e.target);
+    oldValue = $target.val();
+    card = Cards.fromNumber(oldValue);
+    upperLength = card ? card.length[card.length.length - 1] : 0;
+
     return setTimeout(function() {
-      var $target, value;
       $target = angular.element(e.target);
 
-      value = $target.val();
-      value = _getFormattedCardNumber(value);
-      return $target.val(value);
+      newValue = $target.val();
+      newValue = newValue.replace(/\D/g, '');
+      if(card && newValue.length > upperLength) {
+        $target.val(oldValue);
+        ctrl.$setViewValue(oldValue);
+        return;
+      }
+      newValue = _getFormattedCardNumber(newValue);
+      return $target.val(newValue);
     });
   };
 
@@ -187,9 +204,18 @@ angular.module('angularPayments')
 
   _formats['card'] = function(elem, ctrl){
     elem.bind('keypress', _restrictCardNumber);
-    elem.bind('keypress', _formatCardNumber);
+    elem.bind('keypress', function(e) {
+      // Handling firefox. Ctrl+a - it generates kepress event.
+      if(e.charCode === 97 && (e.metaKey || e.ctrlKey)) {
+        return;
+      }
+      _formatCardNumber(e);
+    });
     elem.bind('keydown', _formatBackCardNumber);
-    elem.bind('paste', _reFormatCardNumber);
+    elem.bind('paste', function(e) {
+      _reFormatCardNumber(e, ctrl);
+    });
+
 
     elem.on('$destroy', function() {
       elem.unbind();
